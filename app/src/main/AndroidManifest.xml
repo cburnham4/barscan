@@ -20,6 +20,8 @@
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="barcode" />
+
+        <activity android:name=".CameraCaptureActivity"></activity>
     </application>
 
 </manifest>
