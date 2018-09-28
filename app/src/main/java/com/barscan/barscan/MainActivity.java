@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         adapter = new TabAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CaptureFragment(), "Tab 1");
-        adapter.addFragment(new CaptureFragment(), "Tab 2");
+        adapter.addFragment(new CaptureFragment(), "Bar Scan");
+        adapter.addFragment(new CaptureFragment(), "Graph");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }

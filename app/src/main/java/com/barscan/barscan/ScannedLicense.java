@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class ScannedLicense implements Parcelable{
-    private UUID uuid;
+    private String uuid;
     private String firstName;
     private String lastName;
     private int age;
@@ -19,12 +19,15 @@ public class ScannedLicense implements Parcelable{
     private String address;
     private String scannedDateTime;
 
+    public ScannedLicense() {
+
+    }
     public String getScannedDateTime() {
         return scannedDateTime;
     }
 
     public ScannedLicense(String firstName, String lastName, int age, String dob, String gender, String address, String scannedDateTime) {
-        this.uuid = UUID.randomUUID();
+        this.uuid = UUID.randomUUID().toString();
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -36,7 +39,7 @@ public class ScannedLicense implements Parcelable{
     }
 
     public ScannedLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
-        this.uuid = UUID.randomUUID();
+        this.uuid = UUID.randomUUID().toString();
         this.firstName = driverLicense.getFirstName();
         this.lastName = driverLicense.getLastName();
         this.dob = driverLicense.getBirthDate();
@@ -57,6 +60,10 @@ public class ScannedLicense implements Parcelable{
         gender = in.readString();
         address = in.readString();
         scannedDateTime = in.readString();
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public static final Creator<ScannedLicense> CREATOR = new Creator<ScannedLicense>() {

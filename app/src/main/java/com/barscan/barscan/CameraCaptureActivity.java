@@ -34,6 +34,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Random;
 
 public class CameraCaptureActivity extends AppCompatActivity {
 
@@ -58,6 +59,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
         progress_spinner = findViewById(R.id.progress_spinner);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        pushMockData();
         setupBarcodeScanner();
     }
 
@@ -166,6 +168,8 @@ public class CameraCaptureActivity extends AppCompatActivity {
     }
 
     private void pushData(ScannedLicense scannedId) {
+        String uid = mDatabase.child("customers").push().getKey();
+        scannedId.setUuid(uid);
         mDatabase.child("customers").child(scannedId.getId()).setValue(scannedId).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -181,18 +185,17 @@ public class CameraCaptureActivity extends AppCompatActivity {
         ScannedLicense scannedLicense = new ScannedLicense(driverLicense);
 
        // data.putExtra(LICENSE_PARAM, scannedId);
-        mDatabase.child("customers").child(scannedLicense.getId()).setValue(scannedLicense);
+        pushData(scannedLicense);
 
         progress_spinner.setVisibility(View.GONE);
         showDialog(scannedLicense);
-//        setResult(RESULT_OK, data);
-//        finish();
     }
 
     private ScannedLicense getMockLicense() {
-
-        return new ScannedLicense(RandomStringUtils.randomAlphanumeric(5), RandomStringUtils.randomAlphanumeric(8), 23, "04/24/1995",
-                "male", "", DateHelper.getRandomTime());
+        Random random = new Random();
+        String gender = random.nextBoolean() ? "male" : "female";
+        return new ScannedLicense(RandomStringUtils.randomAlphanumeric(5), RandomStringUtils.randomAlphanumeric(8), random.nextInt(40) + 18, "04/24/1995",
+                gender, "", DateHelper.getRandomTime());
     }
 
 

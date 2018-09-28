@@ -10,8 +10,7 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="MyToolbarTheme"
-        parent="@style/ThemeOverlay.AppCompat.Dark">
+    <style name="MyToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark">
         <item name="colorControlNormal">@color/white</item>
         <item name="titleTextColor">@color/white</item>
     </style>
