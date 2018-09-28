@@ -3,7 +3,10 @@ package com.barscan.barscan;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.UUID;
+
 public class ScannedLicense implements Parcelable{
+    private UUID uuid;
     private String firstName;
     private String lastName;
     private int age;
@@ -12,7 +15,12 @@ public class ScannedLicense implements Parcelable{
     private String address;
     private String scannedDateTime;
 
+    public String getScannedDateTime() {
+        return scannedDateTime;
+    }
+
     public ScannedLicense(String firstName, String lastName, int age, String dob, String gender, String address, String scannedDateTime) {
+        this.uuid = UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -20,6 +28,7 @@ public class ScannedLicense implements Parcelable{
         this.gender = gender;
         this.address = address;
         this.scannedDateTime = scannedDateTime;
+
     }
 
     protected ScannedLicense(Parcel in) {
@@ -43,6 +52,10 @@ public class ScannedLicense implements Parcelable{
             return new ScannedLicense[size];
         }
     };
+
+    public String getId() {
+        return uuid.toString();
+    }
 
     public String getFirstName() {
         return firstName;
@@ -82,11 +95,12 @@ public class ScannedLicense implements Parcelable{
         parcel.writeString(gender);
         parcel.writeString(address);
         parcel.writeString(scannedDateTime);
+        parcel.writeString(uuid.toString());
     }
-
     public String getUserInfo() {
         String info = "Name: " + firstName + " " +lastName + "\n" +
                 "Age: " + age + "\n" +
-                "Gender: " +
+                "Gender: " + gender +  "\n";
+        return info;
     }
 }

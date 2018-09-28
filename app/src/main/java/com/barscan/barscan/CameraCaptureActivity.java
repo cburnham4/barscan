@@ -13,9 +13,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
@@ -25,6 +28,10 @@ import com.wonderkiln.camerakit.CameraKitEventCallback;
 import com.wonderkiln.camerakit.CameraKitImage;
 import com.wonderkiln.camerakit.CameraView;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class CameraCaptureActivity extends AppCompatActivity {
@@ -35,6 +42,8 @@ public class CameraCaptureActivity extends AppCompatActivity {
 
     private CameraView cameraView;
 
+    private DatabaseReference mDatabase;
+
     private ScannedLicense mockLicense = new ScannedLicense("Carl", "Burnham", 23, "04/24/1995", "male", "", "11/20/2017 08:08:08");
 
     @Override
@@ -44,6 +53,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
 
         cameraView = findViewById(R.id.camera);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         setupBarcodeScanner();
     }
 
@@ -115,33 +125,58 @@ public class CameraCaptureActivity extends AppCompatActivity {
     private void showDialog(ScannedLicense scannedLicense) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-
-        alertDialogBuilder.setTitle("User Information").setMessage("User Information");
-                alertDialogBuilder.setPositiveButton("yes",
+        String userInfo = "";
+        if(scannedLicense.getAge() < 21) {
+            userInfo = "Person Is not 21 \n";
+        }
+        userInfo += scannedLicense.getUserInfo();
+        alertDialogBuilder.setTitle("User Information").setMessage(userInfo);
+                alertDialogBuilder.setPositiveButton("Okay",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-
+                                finish();
                             }
                         });
-
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 
+    private void pushMockData() {
+        for (int i = 0; i < 200; i++) {
+            ScannedLicense scannedId = getMockLicense();
+            pushData(scannedId);
+        }
+    }
+
+    private void pushData(ScannedLicense scannedId) {
+        mDatabase.child("customers").child(scannedId.getId()).setValue(scannedId).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.e(TAG, task.toString());
+            }
+        });
+    }
+
     private void returnDriverLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
         Intent data = new Intent();
 
-        data.putExtra(LICENSE_PARAM, mockLicense);
-        setResult(RESULT_OK, data);
-        finish();
+        ScannedLicense scannedId = mockLicense;
+
+        data.putExtra(LICENSE_PARAM, scannedId);
+        mDatabase.child("customers").child(scannedId.getId()).setValue(scannedId);
+
+        showDialog(mockLicense);
+//        setResult(RESULT_OK, data);
+//        finish();
+    }
+
+    private ScannedLicense getMockLicense() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        return new ScannedLicense(RandomStringUtils.randomAlphanumeric(5), RandomStringUtils.randomAlphanumeric(8), 23, "04/24/1995",
+                "male", "", DateHelper.getRandomTime());
     }
 
 
