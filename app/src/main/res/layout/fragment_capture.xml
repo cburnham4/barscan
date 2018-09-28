@@ -5,20 +5,31 @@
     android:layout_height="match_parent"
     tools:context=".CaptureFragment">
 
-    <Button
-        android:id="@+id/btn_scanCode"
-        android:layout_centerHorizontal="true"
-
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/topText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Open Barcode Scanner"
-        android:onClick="scanBarcodeClicked"/>
+        android:layout_marginBottom="8dp"
+        android:gravity="left"
+        android:text="Recent Entries"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/btn_scanCode"
+        android:layout_below="@+id/topText"
+        android:layout_above="@+id/btn_scanCode"
         android:id="@+id/my_recycler_view"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/btn_scanCode"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Barcode Scanner"
+        android:layout_marginBottom="16dp"
+        />
 
 </RelativeLayout>

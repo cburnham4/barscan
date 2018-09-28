@@ -59,7 +59,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
         progress_spinner = findViewById(R.id.progress_spinner);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        pushMockData();
+        //pushMockData();
         setupBarcodeScanner();
     }
 
