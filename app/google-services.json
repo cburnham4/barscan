@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "539236158072",
+    "firebase_url": "https://barscan-40963.firebaseio.com",
+    "project_id": "barscan-40963",
+    "storage_bucket": "barscan-40963.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539236158072:android:b3d54bd617c7b0a5",
+        "android_client_info": {
+          "package_name": "com.barscan.barscan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "539236158072-13utmi79k0i28ig03hkp288jrpkfjc4o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.barscan.barscan",
+            "certificate_hash": "e52afa5aace520ec82b03f8d8e84fbf03abc7a26"
+          }
+        },
+        {
+          "client_id": "539236158072-0pu0meg78ufcetq0igsm8h4no0po4qbn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjSY7AiAz7W6uuT8GMQ7p3xm4NmFt2-7I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539236158072-0pu0meg78ufcetq0igsm8h4no0po4qbn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
