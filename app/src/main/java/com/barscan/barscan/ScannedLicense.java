@@ -83,4 +83,10 @@ public class ScannedLicense implements Parcelable{
         parcel.writeString(address);
         parcel.writeString(scannedDateTime);
     }
+
+    public String getUserInfo() {
+        String info = "Name: " + firstName + " " +lastName + "\n" +
+                "Age: " + age + "\n" +
+                "Gender: " +
+    }
 }

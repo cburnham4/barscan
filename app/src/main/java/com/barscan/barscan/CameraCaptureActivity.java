@@ -1,10 +1,12 @@
 package com.barscan.barscan;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -108,6 +110,30 @@ public class CameraCaptureActivity extends AppCompatActivity {
                 processImage(cameraKitImage.getBitmap());
             }
         });
+    }
+
+    private void showDialog(ScannedLicense scannedLicense) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+
+        alertDialogBuilder.setTitle("User Information").setMessage("User Information");
+                alertDialogBuilder.setPositiveButton("yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+
+                            }
+                        });
+
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private void returnDriverLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
