@@ -6,21 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".CameraCaptureActivity">
 
-    <Button
+    <com.wonderkiln.camerakit.CameraView
+        android:layout_alignTop="@+id/progress_spinner"
+        android:id="@+id/camera"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_marginBottom="26dp"
+        android:adjustViewBounds="true"
+        android:layout_alignBottom="@+id/btn_scanCode"
+        />
 
+    <ProgressBar
+        android:id="@+id/progress_spinner"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btn_scanCode"
+        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan barcode"
+        android:layout_gravity="center"
         android:onClick="scanBarcodeClicked"
         android:layout_marginBottom="28dp"/>
-
-    <com.wonderkiln.camerakit.CameraView
-        android:id="@+id/camera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="26dp"
-        android:adjustViewBounds="true"
-        />
 
 
 

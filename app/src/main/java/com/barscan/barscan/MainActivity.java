@@ -2,6 +2,8 @@ package com.barscan.barscan;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,30 +20,28 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int TAKE_PHOTO_ACTION = 1;
 
+    private TabAdapter adapter;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
+        setupTabs();
     }
 
 
-    public void scanBarcodeClicked(View view) {
-        Intent intent = new Intent(this, CameraCaptureActivity.class);
-        startActivityForResult(intent, TAKE_PHOTO_ACTION);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == TAKE_PHOTO_ACTION) {
-            if (resultCode == RESULT_OK) {
-                ScannedLicense scannedLicense = data.getParcelableExtra(LICENSE_PARAM);
-                processBarcode(scannedLicense);
-            }
-        }
+    private void setupTabs() {
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        adapter = new TabAdapter(getSupportFragmentManager());
+        adapter.addFragment(new CaptureFragment(), "Tab 1");
+        adapter.addFragment(new CaptureFragment(), "Tab 2");
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private void processBarcode(ScannedLicense name) {

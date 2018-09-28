@@ -3,6 +3,10 @@ package com.barscan.barscan;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class ScannedLicense implements Parcelable{
@@ -29,6 +33,20 @@ public class ScannedLicense implements Parcelable{
         this.address = address;
         this.scannedDateTime = scannedDateTime;
 
+    }
+
+    public ScannedLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
+        this.uuid = UUID.randomUUID();
+        this.firstName = driverLicense.getFirstName();
+        this.lastName = driverLicense.getLastName();
+        this.dob = driverLicense.getBirthDate();
+        this.age = DateHelper.getAge(dob);
+        this.gender = driverLicense.getGender().equals("1") ? "male" : "female";
+        this.address = driverLicense.getAddressZip();
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        this.scannedDateTime = dtf.format(now);
     }
 
     protected ScannedLicense(Parcel in) {

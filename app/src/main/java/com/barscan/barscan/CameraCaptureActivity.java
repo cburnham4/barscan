@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,6 +43,8 @@ public class CameraCaptureActivity extends AppCompatActivity {
 
     private CameraView cameraView;
 
+    private ProgressBar progress_spinner;
+
     private DatabaseReference mDatabase;
 
     private ScannedLicense mockLicense = new ScannedLicense("Carl", "Burnham", 23, "04/24/1995", "male", "", "11/20/2017 08:08:08");
@@ -52,6 +55,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera_capture);
 
         cameraView = findViewById(R.id.camera);
+        progress_spinner = findViewById(R.id.progress_spinner);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         setupBarcodeScanner();
@@ -67,6 +71,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
     }
 
     private void processImage(Bitmap bitmap) {
+        Toast.makeText(this, "Processing Image", Toast.LENGTH_SHORT).show();
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
         FirebaseVisionBarcodeDetector detector = FirebaseVision.getInstance()
                 .getVisionBarcodeDetector();
@@ -88,32 +93,36 @@ public class CameraCaptureActivity extends AppCompatActivity {
 
     private void parseImageResults(List<FirebaseVisionBarcode> barcodes) {
         if(barcodes.isEmpty()) {
-            Toast.makeText(this, "No barcodes detected", Toast.LENGTH_SHORT);
-            returnDriverLicense(null);
+            Toast.makeText(this, "No barcodes detected", Toast.LENGTH_SHORT).show();
+            progress_spinner.setVisibility(View.GONE);
             return;
         }
+        boolean foundLicense = false;
         for (FirebaseVisionBarcode barcode: barcodes) {
-            Rect bounds = barcode.getBoundingBox();
-            Point[] corners = barcode.getCornerPoints();
-
-            String rawValue = barcode.getRawValue();
-
             int valueType = barcode.getValueType();
             // See API reference for complete list of supported types
             switch (valueType) {
                 case FirebaseVisionBarcode.TYPE_DRIVER_LICENSE:
                     FirebaseVisionBarcode.DriverLicense license = barcode.getDriverLicense();
-                    //returnDriverLicense(license);
+                    returnDriverLicense(license);
                     Log.e(TAG, license.getFirstName());
+                    foundLicense = true;
+                    break;
                 default:
-                    returnDriverLicense(null);
+                    //Toast.makeText(this, "No barcodes detected", Toast.LENGTH_SHORT);
+                   // returnDriverLicense(null);
 
             }
+        }
+        if(!foundLicense) {
+            progress_spinner.setVisibility(View.GONE);
+            Toast.makeText(this, "No license detected", Toast.LENGTH_SHORT).show();
         }
     }
 
 
     public void scanBarcodeClicked(View view) {
+        progress_spinner.setVisibility(View.VISIBLE);
         cameraView.captureImage(new CameraKitEventCallback<CameraKitImage>() {
             @Override
             public void callback(CameraKitImage cameraKitImage) {
@@ -137,7 +146,13 @@ public class CameraCaptureActivity extends AppCompatActivity {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 finish();
                             }
-                        });
+                        })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        finish();
+                    }
+                });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
@@ -162,19 +177,20 @@ public class CameraCaptureActivity extends AppCompatActivity {
     private void returnDriverLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
         Intent data = new Intent();
 
-        ScannedLicense scannedId = mockLicense;
+        //ScannedLicense scannedId = mockLicense;
+        ScannedLicense scannedLicense = new ScannedLicense(driverLicense);
 
-        data.putExtra(LICENSE_PARAM, scannedId);
-        mDatabase.child("customers").child(scannedId.getId()).setValue(scannedId);
+       // data.putExtra(LICENSE_PARAM, scannedId);
+        mDatabase.child("customers").child(scannedLicense.getId()).setValue(scannedLicense);
 
-        showDialog(mockLicense);
+        progress_spinner.setVisibility(View.GONE);
+        showDialog(scannedLicense);
 //        setResult(RESULT_OK, data);
 //        finish();
     }
 
     private ScannedLicense getMockLicense() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
+
         return new ScannedLicense(RandomStringUtils.randomAlphanumeric(5), RandomStringUtils.randomAlphanumeric(8), 23, "04/24/1995",
                 "male", "", DateHelper.getRandomTime());
     }
