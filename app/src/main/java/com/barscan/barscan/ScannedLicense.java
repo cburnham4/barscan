@@ -125,7 +125,7 @@ public class ScannedLicense implements Parcelable{
     public String getUserInfo() {
         String info = "Name: " + firstName + " " +lastName + "\n" +
                 "Age: " + age + "\n" +
-                "Gender: " + gender +  "\n";
+                "Gender: " + gender +  "";
         return info;
     }
 }
