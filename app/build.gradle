@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.barscan.barscan"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -26,7 +26,6 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'com.wonderkiln:camerakit:0.13.1'
 
 
