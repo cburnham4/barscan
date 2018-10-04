@@ -27,17 +27,16 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() == null) {
-            //TODO: Login
-        } else {
             createLoginUi();
+        } else {
+            //TODO: Login
         }
     }
 
     private void createLoginUi() {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build());
+                new AuthUI.IdpConfig.GoogleBuilder().build());
 
 // Create and launch sign-in intent
         startActivityForResult(
