@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.barscan.barscan.MainActivity;
 import com.barscan.barscan.R;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -29,8 +30,13 @@ public class LoginActivity extends AppCompatActivity {
         if (auth.getCurrentUser() == null) {
             createLoginUi();
         } else {
-            //TODO: Login
+            goToHome();
         }
+    }
+
+    private void goToHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     private void createLoginUi() {
