@@ -1,18 +1,12 @@
 package com.barscan.barscan;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
-import com.google.android.gms.vision.barcode.Barcode;
+import com.barscan.firebaseidscanner.ScannedLicense;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
-
-import static com.barscan.barscan.CameraCaptureActivity.LICENSE_PARAM;
 
 public class MainActivity extends AppCompatActivity {
 

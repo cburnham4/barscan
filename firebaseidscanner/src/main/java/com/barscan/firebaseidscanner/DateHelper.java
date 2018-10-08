@@ -1,9 +1,10 @@
-package com.barscan.barscan;
+package com.barscan.firebaseidscanner;
 
-import android.icu.util.Calendar;
-import android.icu.util.GregorianCalendar;
+
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class DateHelper {
@@ -28,9 +29,9 @@ public class DateHelper {
 
 
     public static int getAge(String dob) {
-        int year = new Integer(dob.substring(4));
-        int month = new Integer(dob.substring(0, 2));
-        int day = new Integer(dob.substring(2, 4));
+        int year = Integer.valueOf(dob.substring(4));
+        int month = Integer.valueOf(dob.substring(0, 2));
+        int day = Integer.valueOf(dob.substring(2, 4));
 
         return getAge(year, month, day);
     }

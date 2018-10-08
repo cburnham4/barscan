@@ -1,4 +1,4 @@
-package com.barscan.barscan;
+package com.barscan.firebaseidscanner;
 
 import android.os.Parcel;
 import android.os.Parcelable;

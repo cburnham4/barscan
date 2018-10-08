@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CameraCaptureActivity">
+    tools:context="com.barscan.firebaseidscanner.CameraCaptureActivity">
 
     <com.wonderkiln.camerakit.CameraView
         android:layout_alignTop="@+id/progress_spinner"

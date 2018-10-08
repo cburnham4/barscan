@@ -1,10 +1,9 @@
-package com.barscan.barscan;
+package com.barscan.firebaseidscanner;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +17,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector;
@@ -41,9 +38,17 @@ public class CameraCaptureActivity extends AppCompatActivity {
 
     private ProgressBar progress_spinner;
 
-    private DatabaseReference mDatabase;
+    private static final String SHOW_DIALOG_EXTRA = "ShowDialog";
 
-    private ScannedLicense mockLicense = new ScannedLicense("Carl", "Burnham", 23, "04/24/1995", "male", "", "11/20/2017 08:08:08");
+    public static Intent getLaunchIntent(Context context) {
+        return getLaunchIntent(context, false);
+    }
+
+    public static Intent getLaunchIntent(Context context, boolean showDialog) {
+        Intent intent = new Intent(context, CameraCaptureActivity.class);
+        intent.putExtra(SHOW_DIALOG_EXTRA, showDialog);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +58,8 @@ public class CameraCaptureActivity extends AppCompatActivity {
         cameraView = findViewById(R.id.camera);
         progress_spinner = findViewById(R.id.progress_spinner);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        //pushMockData();
         setupBarcodeScanner();
     }
-
 
     private void setupBarcodeScanner() {
         FirebaseVisionBarcodeDetectorOptions options =
@@ -73,7 +75,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
         FirebaseVisionBarcodeDetector detector = FirebaseVision.getInstance()
                 .getVisionBarcodeDetector();
 
-        Task<List<FirebaseVisionBarcode>> result = detector.detectInImage(image)
+        detector.detectInImage(image)
                 .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionBarcode>>() {
                     @Override
                     public void onSuccess(List<FirebaseVisionBarcode> barcodes) {
@@ -83,6 +85,7 @@ public class CameraCaptureActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CameraCaptureActivity.this, "Image could not be parsed", Toast.LENGTH_SHORT).show();
                         Log.e(TAG, e.getLocalizedMessage());
                     }
                 });
@@ -128,56 +131,49 @@ public class CameraCaptureActivity extends AppCompatActivity {
         });
     }
 
-    private void showDialog(ScannedLicense scannedLicense) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        String userInfo = "";
-        if(scannedLicense.getAge() < 21) {
-            userInfo = "Person Is not 21 \n";
-        }
-        userInfo += scannedLicense.getUserInfo();
-        alertDialogBuilder.setTitle("User Information").setMessage(userInfo);
-                alertDialogBuilder.setPositiveButton("Okay",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                finish();
-                            }
-                        })
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        finish();
-                    }
-                });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-    private void pushData(ScannedLicense scannedId) {
-        String uid = mDatabase.child("customers").push().getKey();
-        scannedId.setUuid(uid);
-        mDatabase.child("customers").child(scannedId.getId()).setValue(scannedId).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.e(TAG, task.toString());
-            }
-        });
-    }
-
     private void returnDriverLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
         Intent data = new Intent();
 
         //ScannedLicense scannedId = mockLicense;
         ScannedLicense scannedLicense = new ScannedLicense(driverLicense);
 
-       // data.putExtra(LICENSE_PARAM, scannedId);
-        pushData(scannedLicense);
+        data.putExtra(LICENSE_PARAM, scannedLicense);
 
         progress_spinner.setVisibility(View.GONE);
         showDialog(scannedLicense);
     }
+
+    private static void showDialog(ScannedLicense scannedLicense) {
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+//
+//        String userInfo = "";
+//        if(scannedLicense.getAge() < 21) {
+//            userInfo = "Person Is not 21 \n";
+//        }
+//        userInfo += scannedLicense.getUserInfo();
+//        alertDialogBuilder.setTitle("User Information").setMessage(userInfo);
+//        alertDialogBuilder.setPositiveButton("Okay",
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface arg0, int arg1) {
+//                        //killActivity();
+//                    }
+//                })
+//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialogInterface) {
+//                        //finish();
+//                    }
+//                });
+//
+//        AlertDialog alertDialog = alertDialogBuilder.create();
+//        alertDialog.show();
+    }
+
+    private void killActivity() {
+        finish();
+    }
+
 
 
     @Override
