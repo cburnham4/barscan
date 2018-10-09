@@ -5,11 +5,7 @@ import android.os.Parcelable;
 
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
 
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
@@ -24,11 +20,9 @@ public class ScannedLicense implements Parcelable{
     private String address;
     private String scannedDateTime;
 
+    //Required for firebase UI
     public ScannedLicense() {
-
-    }
-    public String getScannedDateTime() {
-        return scannedDateTime;
+        // Used for firebase instantiation
     }
 
     public ScannedLicense(String firstName, String lastName, int age, String dob, String gender, String address, String scannedDateTime) {
@@ -43,7 +37,7 @@ public class ScannedLicense implements Parcelable{
 
     }
 
-    public ScannedLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
+    ScannedLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
         this.uuid = UUID.randomUUID().toString();
         this.firstName = driverLicense.getFirstName();
         this.lastName = driverLicense.getLastName();
@@ -56,7 +50,7 @@ public class ScannedLicense implements Parcelable{
         this.scannedDateTime = dateFormat.format(new Date());
     }
 
-    protected ScannedLicense(Parcel in) {
+    ScannedLicense(Parcel in) {
         firstName = in.readString();
         lastName = in.readString();
         age = in.readInt();
@@ -64,10 +58,7 @@ public class ScannedLicense implements Parcelable{
         gender = in.readString();
         address = in.readString();
         scannedDateTime = in.readString();
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+        uuid = in.readString();
     }
 
     public static final Creator<ScannedLicense> CREATOR = new Creator<ScannedLicense>() {
@@ -81,34 +72,6 @@ public class ScannedLicense implements Parcelable{
             return new ScannedLicense[size];
         }
     };
-
-    public String getId() {
-        return uuid.toString();
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public String getDob() {
-        return dob;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public String getAddress() {
-        return address;
-    }
 
     @Override
     public int describeContents() {
@@ -124,12 +87,78 @@ public class ScannedLicense implements Parcelable{
         parcel.writeString(gender);
         parcel.writeString(address);
         parcel.writeString(scannedDateTime);
-        parcel.writeString(uuid.toString());
+        parcel.writeString(uuid);
     }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+
     public String getUserInfo() {
         String info = "Name: " + firstName + " " +lastName + "\n" +
                 "Age: " + age + "\n" +
                 "Gender: " + gender +  "";
         return info;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getScannedDateTime() {
+        return scannedDateTime;
+    }
+
+    public void setScannedDateTime(String scannedDateTime) {
+        this.scannedDateTime = scannedDateTime;
     }
 }

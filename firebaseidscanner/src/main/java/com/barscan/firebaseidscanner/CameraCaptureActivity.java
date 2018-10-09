@@ -34,16 +34,23 @@ public class CameraCaptureActivity extends AppCompatActivity {
 
     public static final String LICENSE_PARAM = "licenseParam";
 
+    private static final String SHOW_DIALOG_EXTRA = "ShowDialog";
+
     private CameraView cameraView;
 
     private ProgressBar progress_spinner;
 
-    private static final String SHOW_DIALOG_EXTRA = "ShowDialog";
+    private boolean showDialog;
 
     public static Intent getLaunchIntent(Context context) {
         return getLaunchIntent(context, false);
     }
 
+    /**
+     * @param context    context from which the intent is getting called
+     * @param showDialog whether or not the user information should appear on a dialog after the scan
+     * @return return launch intent for activity
+     */
     public static Intent getLaunchIntent(Context context, boolean showDialog) {
         Intent intent = new Intent(context, CameraCaptureActivity.class);
         intent.putExtra(SHOW_DIALOG_EXTRA, showDialog);
@@ -58,7 +65,14 @@ public class CameraCaptureActivity extends AppCompatActivity {
         cameraView = findViewById(R.id.camera);
         progress_spinner = findViewById(R.id.progress_spinner);
 
+        getExtras();
         setupBarcodeScanner();
+    }
+
+    private void getExtras() {
+        if (getIntent().getExtras() != null) {
+            showDialog = getIntent().getBooleanExtra(SHOW_DIALOG_EXTRA, false);
+        }
     }
 
     private void setupBarcodeScanner() {
@@ -92,29 +106,24 @@ public class CameraCaptureActivity extends AppCompatActivity {
     }
 
     private void parseImageResults(List<FirebaseVisionBarcode> barcodes) {
-        if(barcodes.isEmpty()) {
+        if (barcodes.isEmpty()) {
             Toast.makeText(this, "No barcodes detected", Toast.LENGTH_SHORT).show();
             progress_spinner.setVisibility(View.GONE);
             return;
         }
         boolean foundLicense = false;
-        for (FirebaseVisionBarcode barcode: barcodes) {
+        for (FirebaseVisionBarcode barcode : barcodes) {
             int valueType = barcode.getValueType();
             // See API reference for complete list of supported types
-            switch (valueType) {
-                case FirebaseVisionBarcode.TYPE_DRIVER_LICENSE:
-                    FirebaseVisionBarcode.DriverLicense license = barcode.getDriverLicense();
-                    returnDriverLicense(license);
-                    Log.e(TAG, license.getFirstName());
-                    foundLicense = true;
-                    break;
-                default:
-                    //Toast.makeText(this, "No barcodes detected", Toast.LENGTH_SHORT);
-                   // returnDriverLicense(null);
-
+            if (valueType == FirebaseVisionBarcode.TYPE_DRIVER_LICENSE) {
+                FirebaseVisionBarcode.DriverLicense license = barcode.getDriverLicense();
+                returnDriverLicense(license);
+                foundLicense = true;
+                break;
             }
         }
-        if(!foundLicense) {
+
+        if (!foundLicense) {
             progress_spinner.setVisibility(View.GONE);
             Toast.makeText(this, "No license detected", Toast.LENGTH_SHORT).show();
         }
@@ -132,49 +141,50 @@ public class CameraCaptureActivity extends AppCompatActivity {
     }
 
     private void returnDriverLicense(FirebaseVisionBarcode.DriverLicense driverLicense) {
-        Intent data = new Intent();
-
-        //ScannedLicense scannedId = mockLicense;
         ScannedLicense scannedLicense = new ScannedLicense(driverLicense);
 
-        data.putExtra(LICENSE_PARAM, scannedLicense);
-
         progress_spinner.setVisibility(View.GONE);
-        showDialog(scannedLicense);
+
+        if (showDialog) {
+            showDialog(scannedLicense);
+        } else {
+            killActivity(scannedLicense);
+        }
     }
 
-    private static void showDialog(ScannedLicense scannedLicense) {
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-//
-//        String userInfo = "";
-//        if(scannedLicense.getAge() < 21) {
-//            userInfo = "Person Is not 21 \n";
-//        }
-//        userInfo += scannedLicense.getUserInfo();
-//        alertDialogBuilder.setTitle("User Information").setMessage(userInfo);
-//        alertDialogBuilder.setPositiveButton("Okay",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//                        //killActivity();
-//                    }
-//                })
-//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialogInterface) {
-//                        //finish();
-//                    }
-//                });
-//
-//        AlertDialog alertDialog = alertDialogBuilder.create();
-//        alertDialog.show();
+    private void showDialog(final ScannedLicense scannedLicense) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        String userInfo = "";
+        if (scannedLicense.getAge() < 21) {
+            userInfo = "Person Is not 21 \n";
+        }
+        userInfo += scannedLicense.getUserInfo();
+        alertDialogBuilder.setTitle("User Information").setMessage(userInfo);
+        alertDialogBuilder.setPositiveButton("Okay",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        killActivity(scannedLicense);
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        killActivity(scannedLicense);
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
-    private void killActivity() {
+    private void killActivity(ScannedLicense scannedLicense) {
+        Intent data = new Intent();
+        data.putExtra(LICENSE_PARAM, scannedLicense);
+        setResult(RESULT_OK, data);
         finish();
     }
-
-
 
     @Override
     protected void onResume() {
@@ -187,5 +197,4 @@ public class CameraCaptureActivity extends AppCompatActivity {
         cameraView.stop();
         super.onPause();
     }
-
 }
