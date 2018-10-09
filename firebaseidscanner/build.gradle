@@ -24,6 +24,7 @@ android {
 
 }
 
+
 dependencies {
 
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -32,4 +33,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.firebase:firebase-ml-vision:17.0.1'
     implementation 'com.wonderkiln:camerakit:0.13.1'
+}
+
+repositories {
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
 }

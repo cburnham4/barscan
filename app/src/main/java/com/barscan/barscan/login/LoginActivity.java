@@ -27,11 +27,12 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        if (auth.getCurrentUser() == null) {
-            createLoginUi();
-        } else {
-            goToHome();
-        }
+        goToHome();
+//        if (auth.getCurrentUser() == null) {
+//            createLoginUi();
+//        } else {
+//            goToHome();
+//        }
     }
 
     private void goToHome() {
@@ -63,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                goToHome();
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the

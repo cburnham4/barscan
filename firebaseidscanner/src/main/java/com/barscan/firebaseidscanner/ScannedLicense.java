@@ -5,8 +5,13 @@ import android.os.Parcelable;
 
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode;
 
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 public class ScannedLicense implements Parcelable{
@@ -47,9 +52,8 @@ public class ScannedLicense implements Parcelable{
         this.gender = driverLicense.getGender().equals("1") ? "male" : "female";
         this.address = driverLicense.getAddressZip();
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        this.scannedDateTime = dtf.format(now);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+        this.scannedDateTime = dateFormat.format(new Date());
     }
 
     protected ScannedLicense(Parcel in) {
