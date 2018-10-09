@@ -18,7 +18,7 @@ public class StoreUser {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String uid = mDatabase.child("customers").push().getKey();
         scannedId.setUuid(uid);
-        mDatabase.child("customers").child(scannedId.getId()).setValue(scannedId).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mDatabase.child("customers").child(scannedId.getUuid()).setValue(scannedId).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Log.e(TAG, task.toString());
